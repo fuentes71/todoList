@@ -8,7 +8,7 @@ interface fileTaskProps {
 }
 export default function FileTask({ id, fileTask, isDone }: fileTaskProps) {
   const [checked, setChecked] = useState(false);
-
+  const id: htmlElement;
   useEffect(() => {
     if (isDone) {
       return setChecked(!checked);
