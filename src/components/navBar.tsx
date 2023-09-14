@@ -10,10 +10,10 @@ export default function NavBar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const customCard: HTMLElement | null =
-    document.getElementById("custom-card-logout");
+    document.getElementById("customCardLogout");
 
   const handleCollapse = () => {
-    const $id: HTMLElement | null = document.getElementById("navbar-hamburger");
+    const $id: HTMLElement | null = document.getElementById("navbarHamburger");
 
     if ($id?.classList.contains("hidden")) {
       return $id.classList.remove("hidden");
@@ -40,7 +40,7 @@ export default function NavBar() {
   };
   return (
     <>
-      <div className="hidden" id="custom-card-logout">
+      <div className="hidden" id="customCardLogout">
         <CustomCard
           title="Desconectar."
           message={`${user.name}, Deseja mesmo desconectar do Site?`}
@@ -58,11 +58,11 @@ export default function NavBar() {
               </span>
             </a>
             <button
-              data-collapse-toggle="navbar-hamburger"
+              data-collapse-toggle="navbarHamburger"
               onClick={handleCollapse}
               type="button"
               className="inline-flex items-center justify-center p-2 w-10 h-10 ml-3 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-              aria-controls="navbar-hamburger"
+              aria-controls="navbarHamburger"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
@@ -82,7 +82,7 @@ export default function NavBar() {
                 />
               </svg>
             </button>
-            <div className="hidden w-full " id="navbar-hamburger">
+            <div className="hidden w-full " id="navbarHamburger">
               <ul className="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                 <li>
                   <a

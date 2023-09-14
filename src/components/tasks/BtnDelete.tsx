@@ -1,7 +1,7 @@
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { deleteTaskAsyncThunk } from "../store/modules/tasksSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { deleteTaskAsyncThunk } from "../../store/modules/tasksSlice";
+import CustomCard from "../CustomCard";
 import "../styles/animation/btnDelete.css";
-import CustomCard from "./CustomCard";
 
 interface btnDeleteProps {
   idTask: string;

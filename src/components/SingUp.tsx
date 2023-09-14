@@ -31,9 +31,6 @@ export default function SingUp() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(closeAlert);
-  }, [navigate]);
-  useEffect(() => {
     if (user.id) {
       return navigate("/home");
     }
@@ -48,6 +45,7 @@ export default function SingUp() {
 
   const onSubmit: SubmitHandler<TCreateAccount> = (data) => {
     dispatch(singUpAsyncThunk(data));
+    dispatch(closeAlert);
   };
 
   return (

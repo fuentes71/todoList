@@ -3,14 +3,13 @@ import { z } from "zod";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setAlert } from "../store/modules/alertSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   TCreateTask,
   createTaskAsyncThunk,
   getTaskAsyncThunk,
-} from "../store/modules/tasksSlice";
-import "../styles/animation/inputAnimation.css";
+} from "../../store/modules/tasksSlice";
+import "../../styles/animation/inputAnimation.css";
 const schemaTask = z.object({
   title: z.string().min(6, "minimo de 6 caracteres."),
   message: z.string().min(3, "minimo de 3 caracteres."),
@@ -39,13 +38,6 @@ export default function CreateTask() {
     );
     resetForm();
     dispatch(getTaskAsyncThunk(user.id));
-
-    dispatch(
-      setAlert({
-        msg: "Recado criado com sucesso!",
-        type: "success",
-      })
-    );
   };
 
   return (

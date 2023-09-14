@@ -1,34 +1,34 @@
 import { useEffect, useState } from "react";
-import "../styles/animation/inputCheck.css";
+import { useAppDispatch } from "../../store/hooks";
+import { fileTaskAsyncThunk } from "../../store/modules/tasksSlice";
+import "../../styles/animation/inputCheck.css";
 
 interface fileTaskProps {
   id: string;
   fileTask: string;
-  isDone: boolean;
+  isDone: string;
 }
 export default function FileTask({ id, fileTask, isDone }: fileTaskProps) {
   const [checked, setChecked] = useState(false);
-  const id: htmlElement;
   useEffect(() => {
     if (isDone) {
       return setChecked(!checked);
     }
     return setChecked(false);
   }, []);
-  //   const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-  //   const handleClick = () => {
-  //     dispatch(fileTaskAsyncThunk({ idTask: fileTask, idUser: id }));
-  //   };
+  const handleClick = () => {
+    dispatch(fileTaskAsyncThunk({ idUser: id, idTask: fileTask }));
+  };
 
   return (
     <>
       <label className="container-clipboard">
         <input
           type="checkbox"
-          checked={checked}
-          id={id + fileTask}
-          // onClick={handleClick}
+          checked={isDone === "FILED" ? true : false}
+          onClick={handleClick}
         />
         <svg
           viewBox="0 0 384 512"

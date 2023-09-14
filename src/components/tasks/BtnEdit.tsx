@@ -1,15 +1,16 @@
+import CustomCard from "../CustomCard";
 import "../styles/animation/btnEdit.css";
-import CustomCard from "./CustomCard";
 
 interface btnEditProps {
   id: string;
 }
 export default function BtnEdit({ id }: btnEditProps) {
-  const handleFunction = (value: boolean) => {
-    if (value) {
-      return console.log("verdadeiro", id);
+  const handleFunction = (type: string, value: boolean) => {
+    if (type === "edit") {
+      if (value) {
+        return console.log("verdadeiro", id);
+      }
     }
-    return console.log("falso");
   };
   return (
     <>
@@ -17,6 +18,7 @@ export default function BtnEdit({ id }: btnEditProps) {
         <CustomCard
           title="Deletar Tarefa"
           message="Realmente deseja deletar a tarefa?"
+          param={"edit"}
           handleFunction={handleFunction}
         />
       </div>

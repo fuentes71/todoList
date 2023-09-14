@@ -2,6 +2,8 @@
   .checkbox-wrapper *::before,
   .checkbox-wrapper *::after {
   box-sizing: border-box;
+  animation: keyframes-fill .5s;
+
 }
 
 .checkbox-wrapper label {
@@ -35,3 +37,13 @@
   transition: all 0.375s;
 }
 
+@keyframes keyframes-fill {
+  0% {
+    transform: rotate(0deg) scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: rotate(-10deg) scale(1.2);
+  }
+}

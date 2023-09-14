@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/animation/filterTasks.css";
+import "../../styles/animation/filterTasks.css";
 
 interface filterTasksProps {
   handleTitle(title: boolean): void;

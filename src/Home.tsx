@@ -1,15 +1,14 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import CreateTask from "./components/CreateTask";
-import FilterTasks from "./components/FilterTasks";
-import MapTasks from "./components/MapTasks";
 import NavBar from "./components/navBar";
+import CreateTask from "./components/tasks/CreateTask";
+import FilterTasks from "./components/tasks/FilterTasks";
+import MapTasks from "./components/tasks/MapTasks";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { getTaskAsyncThunk } from "./store/modules/tasksSlice";
 
 export default function Home() {
   const user = useAppSelector((state) => state.user);
-  // const tasks = useAppSelector(taskAdapter.selectAll);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
