@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { closeAlert } from "../store/modules/alertSlice";
-import { loading, loginAsyncThunk } from "../store/modules/userSlice";
+import { loginAsyncThunk } from "../store/modules/userSlice";
 import "../styles/animation/inputAnimation.css";
 import LoadingAnimation from "./LoadingAnimation";
 
@@ -30,8 +30,8 @@ export default function Login() {
     resolver: zodResolver(schemaLogin),
   });
   useEffect(() => {
-    dispatch(closeAlert);
-  }, [navigate]);
+    dispatch(closeAlert());
+  }, []);
   useEffect(() => {
     if (user.id) {
       return navigate("/home");
@@ -43,11 +43,12 @@ export default function Login() {
     password: string;
   }) => {
     dispatch(loginAsyncThunk(data));
+    dispatch(closeAlert());
   };
 
   return (
     <>
-      {loading ? <LoadingAnimation /> : ""}
+      {user.loading ? <LoadingAnimation /> : ""}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -121,10 +122,10 @@ export default function Login() {
             <div>
               <button
                 type="submit"
-                disabled={loading ? true : false}
+                disabled={user.loading ? true : false}
                 className="flex w-full justify-center rounded-md bg-gray-900 hover:rgb(173, 216, 230 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                {loading ? "Carregando..." : "Conectar"}
+                {user.loading ? "Carregando..." : "Conectar"}
               </button>
             </div>
           </form>

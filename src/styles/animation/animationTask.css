@@ -2,7 +2,6 @@
   .div-task {
     border: none;
     border-radius: 5px;
-    --tw-text-opacity: 1;
     color:  #333;
     cursor: pointer;
     transform-style: preserve-3d;
@@ -12,15 +11,16 @@
   
   }
   
+ 
   .div-task p {
     animation: keyframes-fill .5s;
 
   }
   .div-task:hover {
     --tw-text-opacity: 1;
-    color:  rgb(79 70 229 / var(--tw-text-opacity));
-
-    background: rgb(79 70 229 / var(--tw-text-opacity));    font-size: 17px;
+    color:  rgb(79 70 229 );
+    background: rgb(79 70 229 );
+    font-size: 17px;
     transform: scale(1.05) rotateY(20deg) rotateX(10deg);
     box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
   }

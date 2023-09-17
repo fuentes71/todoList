@@ -5,7 +5,6 @@ import {
 } from "@reduxjs/toolkit";
 import { axios } from "../../service/api";
 import { RootState } from "../rootReducer";
-import { logout } from "./userSlice";
 
 export type TTask = {
   id: string;
@@ -16,104 +15,119 @@ export type TTask = {
 };
 
 export type TCreateTask = Omit<TTask, "id" | "file" | "done">;
-
-type TRequestTask = {
+export type TRequestTask = {
   idUser: string;
   task: TCreateTask;
 };
-
-type TUserTask = {
+export type TUserTask = {
   idUser: string;
   idTask: string;
 };
-const adapter = createEntityAdapter<TTask>({
+export type TGetTask = {
+  id: string;
+  title?: string | null;
+  file?: "FILED" | "NOTFILED" | null;
+  done?: "PRODUCTION" | "DONE" | null;
+};
+
+export const adapter = createEntityAdapter<TTask>({
   selectId: (task) => task.id,
 });
 
 export const createTaskAsyncThunk = createAsyncThunk(
   "tasks/createTask",
-  async ({ idUser, task }: TRequestTask) => {
+  async ({ idUser, task }: TRequestTask, { dispatch }) => {
     const response = await axios.post(`/tasks/${idUser}`, task);
-    return response;
+
+    return response.data;
+  }
+);
+
+export const deleteTaskAsyncThunk = createAsyncThunk(
+  "tasks/delete",
+  async ({ idUser, idTask }: TUserTask, { dispatch }) => {
+    const response = await axios.delete(`/tasks/${idUser}/${idTask}`);
+    dispatch(getTaskAsyncThunk(idUser));
+    return response.data;
+  }
+);
+
+export const fileTaskAsyncThunk = createAsyncThunk(
+  "tasks/file",
+  async ({ idUser, idTask }: TUserTask, { dispatch }) => {
+    const response = await axios.put(`/tasks/file/${idUser}/${idTask}`);
+    dispatch(getTaskAsyncThunk(idUser));
+    return response.data;
+  }
+);
+
+export const updateTaskAsyncThunk = createAsyncThunk(
+  "tasks/update",
+  async (
+    { idUser, idTask, task }: TUserTask & TCreateTask & TRequestTask,
+    { dispatch }
+  ) => {
+    const response = await axios.put(`/tasks/${idUser}/${idTask}`, task);
+    dispatch(getTaskAsyncThunk(idUser));
+    return { id: idTask, changes: response.data };
   }
 );
 
 export const getTaskAsyncThunk = createAsyncThunk(
   "tasks/getTask",
-  
-  async (id: string,{dispatch}) => {   try{
-    const response = await axios.get(`/tasks/${id}`);
-    return response.data;
-  }catch(error){
-    localStorage.clear()
-    dispatch(logout())
-    return
-  }
-}
-);
-
-export const deleteTaskAsyncThunk = createAsyncThunk(
-  "tasks/delete",
-  async ({ idUser, idTask }: TUserTask,{dispatch}) => {
+  async (id: string) => {
     try{
-      const response = (await axios.delete(`/tasks/${idUser}/${idTask}`));
+
+      const response = await axios.get(`/tasks/${id}`);
       return response.data;
-    }catch(error){
-    return  dispatch(logout())
+    }catch(err){
+
+    }finally{
+      
     }
-    
   }
 );
 
 export const doneTaskAsyncThunk = createAsyncThunk(
   "tasks/done",
-  async ({ idUser, idTask }: TUserTask) => {
-    const response = (await axios.put(`/tasks/done/${idUser}/${idTask}`));
-    return response.data;
-  }
-);
-export const fileTaskAsyncThunk = createAsyncThunk(
-  "tasks/done",
-  async ({ idUser, idTask }: TUserTask) => {
-    const response = (await axios.put(`/tasks/file/${idUser}/${idTask}`));
-    return response.data;
+  async ({ idUser, idTask }: TUserTask, { dispatch }) => {
+    const response = await axios.put(`/tasks/done/${idUser}/${idTask}`);
+    dispatch(getTaskAsyncThunk(idUser));
+    return response.data ;
   }
 );
 
-const slice = createSlice({
+const tasksSlice = createSlice({
   name: "tasks",
-  initialState: adapter.getInitialState,
-  reducers: {},
+  initialState: adapter.getInitialState(),
+  reducers: {
+    updateTask: adapter.updateOne
+  },
   extraReducers(builder) {
-    builder.addCase(createTaskAsyncThunk.fulfilled, (state, action) => {
-      adapter.addOne(state, action.payload.data);
-    });
-    builder.addCase(getTaskAsyncThunk.fulfilled, (state, action) => {
-      adapter.setAll(state, action.payload);
-    });
+    builder
+      .addCase(createTaskAsyncThunk.fulfilled, (state, action) => {
+        adapter.addOne(state, action.payload);
+      })
 
-    builder.addCase(deleteTaskAsyncThunk.fulfilled, (state, action) => {
-      adapter.removeOne(state, action.payload);
-    });
-    // builder.addCase(doneTaskAsyncThunk.fulfilled, (state, action) => {
-    //   console.log(state,action.payload);
-
-    //   adapter.updateOne(state, action.payload);
-    // });
-    builder.addCase(fileTaskAsyncThunk.fulfilled, (state, action) => {
-      console.log(state, action.payload);
-
-      adapter.updateOne(state, action.payload);
-    });
-    // builder.addCase(updateTask.fulfilled, (state, { payload }) => {
-    //   console.log(payload);
-
-    //   adapter.updateOne(state, { id: payload.id, changes: payload.task });
-    // });
+      .addCase(getTaskAsyncThunk.fulfilled, (state, action) => {
+        adapter.setAll(state, action.payload);
+      })
+      .addCase(deleteTaskAsyncThunk.fulfilled, (state, action) => {
+        adapter.removeOne(state, action.payload);
+      })
+      .addCase(doneTaskAsyncThunk.fulfilled, (state, action) => {
+        adapter.updateOne(state, action.payload);
+      })
+      .addCase(fileTaskAsyncThunk.fulfilled, (state, action) => {
+        adapter.updateOne(state, action.payload);
+      });
   },
 });
 
-export const tasksReducer = slice.reducer;
+export const { updateTask } = tasksSlice.actions;
+export const tasksReducer = tasksSlice.reducer;
 export const taskAdapter = adapter.getSelectors<RootState>(
   (state) => state.tasks
 );
+
+export default tasksSlice;

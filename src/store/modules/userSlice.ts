@@ -1,24 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axios } from "../../service/api";
 import { setAlert } from "./alertSlice";
-type TLogin = {
-  email: string;
-  password: string;
-};
 
-type TUser = {
+export type TUser = {
   id: string;
   email: string;
   name: string;
+  loading: boolean;
 };
-
-// type TTask = {
-//     id:string,
-//     title: string,
-//     message: string,
-//     file: "NOTFILED" | "FILED",
-//     done: "DONE" | "PRODUCTION",
-// }
 
 type TCreate = {
   name: string;
@@ -26,39 +15,44 @@ type TCreate = {
   password: string;
   rePassword: string;
 };
-export let loading = false;
+type TLogin = {
+  email: string;
+  password: string;
+};
+
 export const singUpAsyncThunk = createAsyncThunk(
   "userLogged/createUser",
   async (data: TCreate, { dispatch }) => {
     try {
-      loading = true
       const response = await axios.post("/accounts/singup", data);
       return response;
     } catch (error) {
-      loading = false
       dispatch(
         setAlert({
-          msg: "Está conta já existe.",
+          msg: "Esta conta já existe.",
           type: "error",
         })
-        );
-
-          loading = false
-        throw error;
+      );
+      throw error;
+    }finally{
+      dispatch(
+        setAlert({
+          msg: "Conta criada com sucesso.",
+          type: "success",
+        })
+      );
     }
   }
+  
 );
 
 export const loginAsyncThunk = createAsyncThunk(
   "userLogged/login",
   async (data: TLogin, { dispatch }) => {
     try {
-      loading = true;
       const response = await axios.post("/accounts/login", data);
-
       return response;
     } catch (error) {
-      loading = false;
       dispatch(
         setAlert({
           msg: "Esta conta não existe.",
@@ -66,34 +60,51 @@ export const loginAsyncThunk = createAsyncThunk(
         })
       );
       throw error;
-    } finally {
-      loading = false;
     }
   }
 );
 
-const slice = createSlice({
+const userSlice = createSlice({
   name: "user",
-  initialState: {} as TUser,
+  initialState: {
+    id: "",
+    email: "",
+    name: "",
+    loading: false,
+  } as TUser,
   reducers: {
     logout: (state) => {
       state.id = "";
-    state.name = "";
-    state.email = "";},
+      state.name = "";
+      state.email = "";
+      state.loading = false;
+    },
   },
-  extraReducers: (builder) => {
-    builder.addCase(singUpAsyncThunk.fulfilled, () => {
-      window.location.href = "/";
-    });
-    builder.addCase(loginAsyncThunk.fulfilled, (state, action) => {
-      state.id = action.payload.data.id;
-      state.name = action.payload.data.name;
-      state.email = action.payload.data.email;
-    });
-    
+    extraReducers: (builder) => {
+    builder
+      .addCase(singUpAsyncThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(singUpAsyncThunk.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(singUpAsyncThunk.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(loginAsyncThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginAsyncThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.id = action.payload.data.id;
+        state.name = action.payload.data.name;
+        state.email = action.payload.data.email;
+      })
+      .addCase(loginAsyncThunk.rejected, (state) => {
+        state.loading = false;
+      });
   },
 });
 
-
-export const userReducer = slice.reducer;
-export const { logout } = slice.actions;
+export const { logout } = userSlice.actions;
+export const userReducer = userSlice.reducer;

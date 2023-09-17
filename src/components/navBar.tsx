@@ -6,11 +6,11 @@ import { logout } from "../store/modules/userSlice";
 import "../styles/animation/buttonLogout.css";
 import CustomCard from "./CustomCard";
 export default function NavBar() {
+  const customCard: HTMLElement | null =
+    document.getElementById("customCardLogout");
   const user = useAppSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const customCard: HTMLElement | null =
-    document.getElementById("customCardLogout");
 
   const handleCollapse = () => {
     const $id: HTMLElement | null = document.getElementById("navbarHamburger");
@@ -46,6 +46,7 @@ export default function NavBar() {
           message={`${user.name}, Deseja mesmo desconectar do Site?`}
           param="logout"
           handleFunction={handleFunction}
+          type={"ALERT"}
         />
       </div>
       <div className="fixed w-full" style={{ zIndex: "9999" }}>

@@ -1,18 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
-
-import { useEffect } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { closeAlert } from "../store/modules/alertSlice";
-import { loading, singUpAsyncThunk } from "../store/modules/userSlice";
+import { singUpAsyncThunk } from "../store/modules/userSlice";
 import "../styles/animation/inputAnimation.css";
 import LoadingAnimation from "./LoadingAnimation";
 
 const schemaCreateAccount = z
   .object({
-    email: z.string().email("E-mail invalido."),
+    email: z.string().email("E-mail inválido."),
     name: z.string().nonempty().min(3, "O nome deve ter no mínimo 3 letras."),
     password: z.string().min(6, "Senha menor que 6 dígitos."),
     rePassword: z.string().min(6, "Senha de confirmação menor que 6 dígitos."),
@@ -26,15 +25,20 @@ type TCreateAccount = z.infer<typeof schemaCreateAccount>;
 
 export default function SingUp() {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user);
-  const { msg, type, show } = useAppSelector((state) => state.alert);
+  const user = useAppSelector(({ user }) => user);
+  const { msg, type } = useAppSelector(({ alert }) => alert);
   const navigate = useNavigate();
 
   useEffect(() => {
+    dispatch(closeAlert());
+  }, []);
+
+  useEffect(() => {
     if (user.id) {
-      return navigate("/home");
+      navigate("/home");
     }
-  }, [user]);
+  }, [user, navigate]);
+
   const {
     register,
     handleSubmit,
@@ -43,14 +47,14 @@ export default function SingUp() {
     resolver: zodResolver(schemaCreateAccount),
   });
 
-  const onSubmit: SubmitHandler<TCreateAccount> = (data) => {
+  const onSubmit = (data: TCreateAccount) => {
     dispatch(singUpAsyncThunk(data));
-    dispatch(closeAlert);
+    dispatch(closeAlert());
   };
 
   return (
     <>
-      {loading ? <LoadingAnimation /> : ""}
+      {user.loading ? <LoadingAnimation /> : ""}
 
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -61,15 +65,21 @@ export default function SingUp() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="relative ">
-              {type && "error" ? (
+              {type === "error" && (
                 <span
                   className=" w-full block text-red-500 "
                   style={{ top: "-30px" }}
                 >
                   {msg}
                 </span>
-              ) : (
-                ""
+              )}
+              {type === "success" && (
+                <span
+                  className=" w-full block text-green-500 "
+                  style={{ top: "-30px" }}
+                >
+                  {msg}
+                </span>
               )}
               {errors.name && (
                 <span
@@ -187,7 +197,7 @@ export default function SingUp() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-gray-900 hover:rgb(173, 216, 230 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                {loading ? "Criando..." : "CRIAR CONTA"}
+                {user.loading ? "Criando..." : "CRIAR CONTA"}
               </button>
             </div>
           </form>

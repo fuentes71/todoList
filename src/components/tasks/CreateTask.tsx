@@ -3,12 +3,13 @@ import { z } from "zod";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppDispatch } from "../../store/hooks";
 import {
   TCreateTask,
   createTaskAsyncThunk,
   getTaskAsyncThunk,
 } from "../../store/modules/tasksSlice";
+import { TUser } from "../../store/modules/userSlice";
 import "../../styles/animation/inputAnimation.css";
 const schemaTask = z.object({
   title: z.string().min(6, "minimo de 6 caracteres."),
@@ -17,9 +18,11 @@ const schemaTask = z.object({
 
 type TTask = z.infer<typeof schemaTask>;
 
-export default function CreateTask() {
+interface CreateTaskProps {
+  user: TUser;
+}
+export default function CreateTask({ user }: CreateTaskProps) {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user);
 
   const [task, setTask] = useState<TCreateTask>({ title: "", message: "" });
   const {

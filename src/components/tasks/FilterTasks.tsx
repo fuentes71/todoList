@@ -1,20 +1,11 @@
 import { useState } from "react";
 import "../../styles/animation/filterTasks.css";
 
-interface filterTasksProps {
-  handleTitle(title: boolean): void;
-  handleDone(done: boolean): void;
-  handleFile(file: boolean): void;
+interface FilterTasksProps {
+  handleChangeFilter: (type: string, value?: string) => void;
 }
-export default function FilterTasks({
-  handleTitle,
-  handleDone,
-  handleFile,
-}: filterTasksProps) {
-  const [title, setTitle] = useState<boolean>(false);
-  const [done, setDone] = useState<boolean>(false);
-  const [file, setFile] = useState<boolean>(false);
-
+export default function FilterTasks({ handleChangeFilter }: FilterTasksProps) {
+  const [title, setTitle] = useState<string>("");
   return (
     <>
       <div className="customCheckBoxHolder justify-center space-y-10">
@@ -22,40 +13,21 @@ export default function FilterTasks({
           className="customCheckBoxInput hidden"
           id="cCB1"
           type="checkbox"
+          checked={title === "" ? true : false}
         />
         <label className="customCheckBoxWrapper" htmlFor="cCB1">
           <div className="customCheckBox">
             <input
               type="text"
               className="w-full max-w-[160px] bg-transparent  pl-2  font-semibold border-e-transparent "
-              placeholder="pesquisar"
-              style={{ outline: "0" }}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                handleChangeFilter("title", title);
+              }}
             />
-            <div
-              className="inner"
-              onChange={() => {
-                setTitle(!title);
-                handleTitle(title);
-              }}
-            >
-              <input
-                type="button"
-                value="Search"
-                className="customCheckBoxWrappe p-2   transition-colors"
-                id="cCB1"
-              />
+            <div className="inner absolute">
+              {title === "" ? "Pesquisar" : ""}
             </div>
-
-            {/* <input type="text" />
-            <div
-              className="inner"
-              onChange={() => {
-                setTitle(!title);
-                handleTitle(title);
-              }}
-            >
-              Pesquisar
-            </div> */}
           </div>
         </label>
 
@@ -63,18 +35,11 @@ export default function FilterTasks({
           className="customCheckBoxInput hidden"
           id="cCB2"
           type="checkbox"
+          onClick={() => handleChangeFilter("completed")}
         />
         <label className="customCheckBoxWrapper" htmlFor="cCB2">
           <div className="customCheckBox">
-            <div
-              className="inner"
-              onChange={() => {
-                setDone(!done);
-                handleDone(done);
-              }}
-            >
-              Concluidas
-            </div>
+            <div className="inner">Concluidas</div>
           </div>
         </label>
 
@@ -82,18 +47,11 @@ export default function FilterTasks({
           className="customCheckBoxInput hidden"
           id="cCB3"
           type="checkbox"
+          onClick={() => handleChangeFilter("archived")}
         />
         <label className="customCheckBoxWrapper" htmlFor="cCB3">
           <div className="customCheckBox">
-            <div
-              className="inner"
-              onChange={() => {
-                setFile(!file);
-                handleFile(file);
-              }}
-            >
-              Arquivadas
-            </div>
+            <div className="inner">Arquivadas</div>
           </div>
         </label>
       </div>
