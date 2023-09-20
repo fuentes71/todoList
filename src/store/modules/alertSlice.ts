@@ -1,23 +1,18 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-
-type TFeedback = {
-    msg: string;
-    type: 'error' | 'success' | 'info';
-    show: boolean;
-}
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { TFeedback } from "../../types/Types";
 
 const slice = createSlice({
-  name: 'alert',
+  name: "alert",
   initialState: {} as TFeedback,
   reducers: {
-    setAlert: (state, action: PayloadAction<Omit<TFeedback, 'show'>>) => {
+    setAlert: (state, action: PayloadAction<Omit<TFeedback, "show">>) => {
       state.msg = action.payload.msg;
       state.type = action.payload.type;
       state.show = true;
     },
     closeAlert: (state) => {
-      state.msg = '';
-      state.type = 'info';
+      state.msg = "";
+      state.type = "info";
       state.show = false;
     },
   },

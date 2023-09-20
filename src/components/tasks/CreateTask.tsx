@@ -1,26 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch } from "../../store/hooks";
 import {
-  TCreateTask,
   createTaskAsyncThunk,
   getTaskAsyncThunk,
 } from "../../store/modules/tasksSlice";
-import { TUser } from "../../store/modules/userSlice";
 import "../../styles/animation/inputAnimation.css";
-const schemaTask = z.object({
-  title: z.string().min(6, "minimo de 6 caracteres."),
-  message: z.string().min(3, "minimo de 3 caracteres."),
-});
+import { CreateTaskProps } from "../../types/Interfaces";
+import { TCreateTask } from "../../types/Types";
+import { TTask, schemaTask } from "../../types/ZTypes";
 
-type TTask = z.infer<typeof schemaTask>;
-
-interface CreateTaskProps {
-  user: TUser;
-}
 export default function CreateTask({ user }: CreateTaskProps) {
   const dispatch = useAppDispatch();
 

@@ -1,4 +1,4 @@
-.container-card{
+.containerCard{
   position: fixed;
   top: 0;
     display: flex;
@@ -117,6 +117,8 @@
     transition: all .6s ease;
   }
   
+
+  
   .declineButton {
     width: 80px;
     height: 30px;
@@ -149,7 +151,8 @@
   .form-container {
     width: 400px;
     background: linear-gradient(#212121, #212121) padding-box,
-                linear-gradient(145deg, transparent 35%,#e81cff, #40c9ff) border-box;
+    linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%) border-box;
+
     border: 2px solid transparent;
     padding: 32px 24px;
     font-size: 14px;

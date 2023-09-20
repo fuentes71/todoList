@@ -1,4 +1,4 @@
-.container-clipboard {
+.containerClipboard {
   --color: #333;
   --size: 20px;
   cursor: pointer;
@@ -6,33 +6,36 @@
   user-select: none;
   fill: var(--color);
 }
-
-.container-clipboard:hover{
+.containerClipboard:hover{
+  font-size: 26px;
+transition-duration: .3s;
+}
+.containerClipboard:hover{
   fill: rgb(79 70 229 );
 }
 
-.container-clipboard .clipboard {
+.containerClipboard .clipboard {
   position: absolute;
   animation: keyframes-fill .5s;
 }
 
-.container-clipboard .clipboard-check {
+.containerClipboard .clipboardCheck {
   position: absolute;
   display: none;
   animation: keyframes-fill .5s;
 }
 
 /* ------ On check event ------ */
-.container-clipboard input:checked ~ .clipboard {
+.containerClipboard input:checked ~ .clipboard {
   display: none;
 }
 
-.container-clipboard input:checked ~ .clipboard-check {
+.containerClipboard input:checked ~ .clipboardCheck {
   display: block;
 }
 
 /* ------ Hide the default checkbox ------ */
-.container-clipboard input {
+.containerClipboard input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -72,7 +75,7 @@
   animation: keyframes-fill .5s;
 }
 
-.container .clipboard-check {
+.container .clipboardCheck {
   position: absolute;
   display: none;
   animation: keyframes-fill .5s;
@@ -83,7 +86,7 @@
   display: none;
 }
 
-.container input:checked ~ .clipboard-check {
+.container input:checked ~ .clipboardCheck {
   display: block;
 }
 

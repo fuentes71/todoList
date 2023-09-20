@@ -1,49 +1,29 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axios } from "../../service/api";
+import { TCreate, TLogin, TUser } from "../../types/Types";
 import { setAlert } from "./alertSlice";
-
-export type TUser = {
-  id: string;
-  email: string;
-  name: string;
-  loading: boolean;
-};
-
-type TCreate = {
-  name: string;
-  email: string;
-  password: string;
-  rePassword: string;
-};
-type TLogin = {
-  email: string;
-  password: string;
-};
 
 export const singUpAsyncThunk = createAsyncThunk(
   "userLogged/createUser",
   async (data: TCreate, { dispatch }) => {
     try {
       const response = await axios.post("/accounts/singup", data);
-      return response;
-    } catch (error) {
-      dispatch(
-        setAlert({
-          msg: "Esta conta já existe.",
-          type: "error",
-        })
-      );
-      throw error;
-    }finally{
       dispatch(
         setAlert({
           msg: "Conta criada com sucesso.",
           type: "success",
         })
       );
+      return response;
+    } catch (error) {
+      return dispatch(
+        setAlert({
+          msg: "Esta conta já existe.",
+          type: "error",
+        })
+      );
     }
   }
-  
 );
 
 export const loginAsyncThunk = createAsyncThunk(
@@ -80,7 +60,7 @@ const userSlice = createSlice({
       state.loading = false;
     },
   },
-    extraReducers: (builder) => {
+  extraReducers: (builder) => {
     builder
       .addCase(singUpAsyncThunk.pending, (state) => {
         state.loading = true;

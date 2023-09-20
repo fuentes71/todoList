@@ -1,24 +1,43 @@
 import { useEffect, useState } from "react";
-import "../../styles/animation/animationTask.css";
-import "../../styles/animation/filterTasks.css";
-
 import { useAppDispatch } from "../../store/hooks";
 import {
-  TTask,
   doneTaskAsyncThunk,
   fileTaskAsyncThunk,
   getTaskAsyncThunk,
 } from "../../store/modules/tasksSlice";
-import { TUser } from "../../store/modules/userSlice";
+import "../../styles/animation/animationTask.css";
+import "../../styles/animation/filterTasks.css";
+import { TTask, TUser } from "../../types/Types";
+import CustomCard from "../CustomCard";
+import BtnDelete from "./BtnDelete";
+import BtnEdit from "./BtnEdit";
 import CheckBoxDone from "./CheckBoxDone";
 import FileTask from "./FileTask";
-import ViewTask from "./ViewTask";
 
 interface MapTasksProps {
   tasks: TTask[];
   user: TUser;
 }
+
+interface customCardValuesProps {
+  idTask?: string;
+  title: string;
+  message: string;
+  type: "EDIT" | "ALERT";
+  typeFunction: "LOGOUT" | "DELET" | "EDIT" | null;
+  open: boolean;
+}
+
 export default function MapTasks({ tasks, user }: MapTasksProps) {
+  const [CustomCardValues, setCustomCardValues] =
+    useState<customCardValuesProps>({
+      idTask: "",
+      title: "",
+      message: "",
+      type: "EDIT",
+      typeFunction: null,
+      open: false,
+    });
   const dispatch = useAppDispatch();
 
   const [filters, setFilters] = useState({
@@ -28,6 +47,7 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
   });
 
   useEffect(() => {
+    //verifica se o "pesquisar" do filtro esta vazio e desativa ele
     if (filters.title.value === "") {
       setFilters({
         ...filters,
@@ -37,12 +57,23 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
   }, [filters.title.value.length]);
 
   const applyFilters = () => {
+    //se algum filtro estiver ativo, faça o filtro na linha seguinte
     return tasks.filter((task) => {
       const titleFilter =
         !filters.title.active || task.title.includes(filters.title.value);
       const completedFilter = !filters.completed.active || task.done === "DONE";
       const archivedFilter = !filters.archived.active || task.file === "FILED";
 
+      // verefica se todos os filtros estão desativados
+      const allFiltersDisabled =
+        !filters.title.active &&
+        !filters.completed.active &&
+        !filters.archived.active;
+
+      // Retorne todas as tarefas não arquivadas quando todos os filtros estiverem desativados
+      if (allFiltersDisabled) {
+        return task.file !== "FILED";
+      }
       return titleFilter && completedFilter && archivedFilter;
     });
   };
@@ -50,8 +81,7 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
   const filteredTasks = applyFilters();
 
   const handleChange = (type: string, idTask: string, positionTask: number) => {
-    const updatedTasks = [...filteredTasks]; // Crie uma cópia do array de tasks
-
+    const updatedTasks = [...filteredTasks];
     if (type === "completed") {
       updatedTasks[positionTask] = {
         ...updatedTasks[positionTask],
@@ -73,6 +103,26 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
 
   return (
     <>
+      <div className={!CustomCardValues.open ? "hidden" : ""}>
+        <CustomCard
+          idTask={CustomCardValues.idTask!}
+          idUser={user.id}
+          type={CustomCardValues.type}
+          title={CustomCardValues.title}
+          message={CustomCardValues.message}
+          param={CustomCardValues.typeFunction}
+          handleClose={() => {
+            setCustomCardValues({
+              ...CustomCardValues,
+              idTask: "",
+              message: "",
+              open: false,
+              title: "",
+              typeFunction: null,
+            });
+          }}
+        />
+      </div>
       <div>
         <div className="customCheckBoxHolder justify-center space-y-10">
           <input
@@ -80,6 +130,7 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
             id="cCB1"
             type="checkbox"
             checked={filters.title.active}
+            onChange={() => {}}
           />
           <label className="customCheckBoxWrapper" htmlFor="cCB1">
             <div className="customCheckBox">
@@ -155,46 +206,55 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
                         />
                       </div>
                       <div className="  pl-4 p-10 flex justify-center items-start rounded-xl flex-col w-full font-bold  h-24">
-                        {task.done === "DONE" ? (
-                          <>
-                            <p
-                              style={{
-                                wordBreak: "break-word",
-                                animationDelay: "50ms",
-                              }}
-                              className=" line-through "
-                            >
-                              {task.title}
-                            </p>
-                          </>
-                        ) : (
-                          <p
-                            style={{
-                              wordBreak: "break-word",
-                              animationDelay: "50ms",
+                        <h2
+                          className={task.done === "DONE" ? "line-through" : ""}
+                        >
+                          {task.title}
+                        </h2>
+                        <p
+                          className={task.done === "DONE" ? "line-through" : ""}
+                        >
+                          {task.message}
+                        </p>
+                      </div>
+                      <div>
+                        <div className="absolute top-2 right-5">
+                          <FileTask
+                            checked={task.file === "FILED" ? true : false}
+                            idTask={task.id}
+                            handleChange={() => {
+                              handleChange("archived", task.id, index);
                             }}
-                          >
-                            {task.title}
-                          </p>
-                        )}
-                      </div>
-                      <div className=" absolute right-5 top-2">
-                        <FileTask
-                          checked={task.file === "FILED" ? true : false}
-                          idTask={task.id}
-                          handleChange={() => {
-                            handleChange("archived", task.id, index);
-                          }}
-                        />
-                      </div>
-
-                      <div className=" absolute right-1 bottom-2 ">
-                        <ViewTask
-                          handleChange={function (id: string): void {
-                            throw new Error("Function not implemented.");
-                          }}
-                          id={""}
-                        />
+                          />
+                        </div>
+                        <div className="flex flex-wrap gap-8 bottom-4 right-5 absolute">
+                          <BtnEdit
+                            handleFunction={() => {
+                              setCustomCardValues({
+                                ...CustomCardValues,
+                                idTask: task.id,
+                                message: task.message,
+                                open: true,
+                                title: task.title,
+                                typeFunction: "EDIT",
+                                type: "EDIT",
+                              });
+                            }}
+                          />
+                          <BtnDelete
+                            handleFunction={() => {
+                              setCustomCardValues({
+                                ...CustomCardValues,
+                                idTask: task.id,
+                                message: `Deseja deletar o recado: ${task.title}?`,
+                                open: true,
+                                type: "ALERT",
+                                title: "Deletar Tarefa.",
+                                typeFunction: "DELET",
+                              });
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

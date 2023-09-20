@@ -1,4 +1,4 @@
-import "../styles/animation/backgroundAnimate.css";
+import "../../styles/animation/backgroundAnimate.css";
 export default function BackgroundAnimate() {
   return (
     <>

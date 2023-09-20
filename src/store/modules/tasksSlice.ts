@@ -4,31 +4,9 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import { axios } from "../../service/api";
+import { TCreateTask, TRequestTask, TTask, TUserTask } from "../../types/Types";
 import { RootState } from "../rootReducer";
-
-export type TTask = {
-  id: string;
-  title: string;
-  message: string;
-  file: "NOTFILED" | "FILED";
-  done: "PRODUCTION" | "DONE";
-};
-
-export type TCreateTask = Omit<TTask, "id" | "file" | "done">;
-export type TRequestTask = {
-  idUser: string;
-  task: TCreateTask;
-};
-export type TUserTask = {
-  idUser: string;
-  idTask: string;
-};
-export type TGetTask = {
-  id: string;
-  title?: string | null;
-  file?: "FILED" | "NOTFILED" | null;
-  done?: "PRODUCTION" | "DONE" | null;
-};
+import { logout } from "./userSlice";
 
 export const adapter = createEntityAdapter<TTask>({
   selectId: (task) => task.id,
@@ -38,6 +16,7 @@ export const createTaskAsyncThunk = createAsyncThunk(
   "tasks/createTask",
   async ({ idUser, task }: TRequestTask, { dispatch }) => {
     const response = await axios.post(`/tasks/${idUser}`, task);
+    dispatch(getTaskAsyncThunk(idUser));
 
     return response.data;
   }
@@ -75,15 +54,15 @@ export const updateTaskAsyncThunk = createAsyncThunk(
 
 export const getTaskAsyncThunk = createAsyncThunk(
   "tasks/getTask",
-  async (id: string) => {
-    try{
-
+  async (id: string, { dispatch }) => {
+    try {
       const response = await axios.get(`/tasks/${id}`);
       return response.data;
-    }catch(err){
-
-    }finally{
-      
+    } catch (err: any) {
+      if (err.response?.status === 400) {
+        dispatch(logout());
+      }
+    } finally {
     }
   }
 );
@@ -93,7 +72,7 @@ export const doneTaskAsyncThunk = createAsyncThunk(
   async ({ idUser, idTask }: TUserTask, { dispatch }) => {
     const response = await axios.put(`/tasks/done/${idUser}/${idTask}`);
     dispatch(getTaskAsyncThunk(idUser));
-    return response.data ;
+    return response.data;
   }
 );
 
@@ -101,7 +80,7 @@ const tasksSlice = createSlice({
   name: "tasks",
   initialState: adapter.getInitialState(),
   reducers: {
-    updateTask: adapter.updateOne
+    updateTask: adapter.updateOne,
   },
   extraReducers(builder) {
     builder

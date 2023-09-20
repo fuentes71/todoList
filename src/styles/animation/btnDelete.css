@@ -1,52 +1,21 @@
-.delete-button {
-  position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 80px;
-    height: 40px;
-    border: none;
-    padding: 0px 6px;
-    background-color: rgb(255, 69, 69);
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 10px;
-    box-shadow: 5px 5px 0px rgb(212, 32, 32);
-    transition-duration: .3s;
-    font-size: 15px;
-  }
-  
-  .delete-svgIcon {
-    width: 13px;
-    position: absolute;
-    right: 0;
-    margin-right: 10px;
-    fill: white;
-    transition-duration: .3s;
-  }
-  
+ .delete-button {
+   position: relative;
+   display: flex;
+   align-items: center;
+   cursor: pointer;
+ }
 
-  
-  .delete-button:hover {
-    color: transparent;
+ .delete-svgIcon {
+   width: 15px;
+   position: absolute;
+   fill: #333;
+   transition-duration: .3s;
+ }
 
-    align-items: center;
-    box-shadow: 5px 5px 0px rgb(212, 32, 32);
+ .delete-svgIcon:hover {
+  width: 20px;
+   fill: rgb(255, 69, 69);
 
-  }
-  
-  .delete-button:hover .delete-svgIcon {
-    right: 43%;
-    margin: 0;
-    padding: 0;
-    border: none;
-    transition-duration: .3s;
-  }
-  
-  
-  .delete-button:active {
-    transform: translate(3px , 3px);
-    transition-duration: .3s;
-    box-shadow: 2px 2px 0px rgb(212, 32, 32);
-  }
+ }
+
+ 

@@ -1,52 +1,30 @@
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import logo from "../assets/clipboard.svg";
-import { useAppSelector } from "../store/hooks";
-import { logout } from "../store/modules/userSlice";
 import "../styles/animation/buttonLogout.css";
 import CustomCard from "./CustomCard";
-export default function NavBar() {
-  const customCard: HTMLElement | null =
-    document.getElementById("customCardLogout");
-  const user = useAppSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
+export default function NavBar({ user }: any) {
+  const [openCard, setOpenCard] = useState<boolean>(false);
   const handleCollapse = () => {
-    const $id: HTMLElement | null = document.getElementById("navbarHamburger");
+    const id: HTMLElement | null = document.getElementById("navbarHamburger");
 
-    if ($id?.classList.contains("hidden")) {
-      return $id.classList.remove("hidden");
+    if (id!.classList.contains("hidden")) {
+      return id!.classList.remove("hidden");
     }
-    return $id?.classList.add("hidden");
+    return id!.classList.add("hidden");
   };
 
-  const handleLogout = () => {
-    if (customCard?.classList.contains("hidden")) {
-      return customCard.classList.remove("hidden");
-    }
-  };
-
-  const handleFunction = (type: string, value: boolean) => {
-    if (type === "logout") {
-      if (value) {
-        customCard?.classList.add("hidden");
-
-        dispatch(logout());
-        return navigate("/");
-      }
-    }
-    return customCard?.classList.add("hidden");
-  };
   return (
     <>
-      <div className="hidden" id="customCardLogout">
+      <div className={!openCard ? "hidden" : ""} id="customCardLogout">
         <CustomCard
           title="Desconectar."
           message={`${user.name}, Deseja mesmo desconectar do Site?`}
-          param="logout"
-          handleFunction={handleFunction}
+          handleClose={() => setOpenCard(false)}
           type={"ALERT"}
+          idTask={""}
+          idUser={""}
+          param={"LOGOUT"}
         />
       </div>
       <div className="fixed w-full" style={{ zIndex: "9999" }}>
@@ -64,7 +42,7 @@ export default function NavBar() {
               type="button"
               className="inline-flex items-center justify-center p-2 w-10 h-10 ml-3 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               aria-controls="navbarHamburger"
-              aria-expanded="false"
+              aria-expanded="true"
             >
               <span className="sr-only">Open main menu</span>
               <svg
@@ -83,7 +61,7 @@ export default function NavBar() {
                 />
               </svg>
             </button>
-            <div className="hidden w-full " id="navbarHamburger">
+            <div className={"hidden w-full"} id="navbarHamburger">
               <ul className="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                 <li>
                   <a
@@ -94,24 +72,20 @@ export default function NavBar() {
                     Home
                   </a>
                 </li>
-                {/* <li>
-                  <a
-                    href="#"
-                    className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    Pricing
-                  </a>
-                </li> */}
+
                 <li>
                   <div className="inline-flex items-center justify-center ">
-                    <button className="Btn" onClick={handleLogout}>
+                    <button
+                      className="Btn"
+                      onClick={() => setOpenCard(!openCard)}
+                    >
                       <div className="sign">
                         <svg viewBox="0 0 512 512">
                           <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
                         </svg>
                       </div>
 
-                      <div className="text">Logout</div>
+                      <div className="text">Sair</div>
                     </button>
                   </div>
                 </li>

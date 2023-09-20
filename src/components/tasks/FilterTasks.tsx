@@ -1,9 +1,7 @@
 import { useState } from "react";
 import "../../styles/animation/filterTasks.css";
+import { FilterTasksProps } from "../../types/Interfaces";
 
-interface FilterTasksProps {
-  handleChangeFilter: (type: string, value?: string) => void;
-}
 export default function FilterTasks({ handleChangeFilter }: FilterTasksProps) {
   const [title, setTitle] = useState<string>("");
   return (

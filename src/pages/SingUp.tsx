@@ -2,26 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
+import LoadingAnimation from "../components/animation/LoadingAnimation";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { closeAlert } from "../store/modules/alertSlice";
 import { singUpAsyncThunk } from "../store/modules/userSlice";
 import "../styles/animation/inputAnimation.css";
-import LoadingAnimation from "./LoadingAnimation";
-
-const schemaCreateAccount = z
-  .object({
-    email: z.string().email("E-mail inválido."),
-    name: z.string().nonempty().min(3, "O nome deve ter no mínimo 3 letras."),
-    password: z.string().min(6, "Senha menor que 6 dígitos."),
-    rePassword: z.string().min(6, "Senha de confirmação menor que 6 dígitos."),
-  })
-  .refine(({ password, rePassword }) => password === rePassword, {
-    message: "Senhas não conferem",
-    path: ["rePassword"],
-  });
-
-type TCreateAccount = z.infer<typeof schemaCreateAccount>;
+import { TCreateAccount, schemaCreateAccount } from "../types/ZTypes";
 
 export default function SingUp() {
   const dispatch = useAppDispatch();
@@ -42,14 +28,18 @@ export default function SingUp() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<TCreateAccount>({
     resolver: zodResolver(schemaCreateAccount),
   });
 
+  useEffect(() => {
+    if (type === "success") return reset();
+  }, [type]);
+
   const onSubmit = (data: TCreateAccount) => {
     dispatch(singUpAsyncThunk(data));
-    dispatch(closeAlert());
   };
 
   return (
@@ -136,7 +126,7 @@ export default function SingUp() {
                 type="email"
                 required
                 autoComplete="email"
-                className="block w-full rounded-md border-0 py-1.5 bg-transparent"
+                className=" block w-full rounded-md border-0 py-1.5 bg-transparent"
                 {...register("email")}
               />{" "}
               <label>

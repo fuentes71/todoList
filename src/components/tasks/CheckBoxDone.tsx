@@ -1,14 +1,11 @@
 import "../../styles/animation/checkBoxDone.css";
-interface checkBoxDoneProps {
-  checked: boolean;
-  idTask: string;
-  handleChange(type: string, idTask: string): void;
-}
+import { checkBoxProps } from "../../types/Interfaces";
+
 export default function CheckBoxDone({
   checked,
   idTask,
   handleChange,
-}: checkBoxDoneProps) {
+}: checkBoxProps) {
   return (
     <>
       <div className="checkbox-wrapper ">
@@ -16,7 +13,7 @@ export default function CheckBoxDone({
           <input
             type="checkbox"
             checked={checked}
-            onClick={() => handleChange("archived", idTask)}
+            onChange={() => handleChange("archived", idTask)}
           />
           <span className="checkbox"></span>
         </label>

@@ -2,19 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
+import LoadingAnimation from "../components/animation/LoadingAnimation";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { closeAlert } from "../store/modules/alertSlice";
 import { loginAsyncThunk } from "../store/modules/userSlice";
 import "../styles/animation/inputAnimation.css";
-import LoadingAnimation from "./LoadingAnimation";
-
-const schemaLogin = z.object({
-  email: z.string().email("E-mail invalido"),
-  password: z.string().min(6, "Senha menor que 6 dígitos"),
-});
-
-type TLogin = z.infer<typeof schemaLogin>;
+import { TLogin, schemaLogin } from "../types/ZTypes";
 
 export default function Login() {
   const dispatch = useAppDispatch();

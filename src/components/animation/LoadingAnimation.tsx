@@ -1,4 +1,4 @@
-import "../styles/animation/animationLoading.css";
+import "../../styles/animation/animationLoading.css";
 
 export default function LoadingAnimation() {
   return (
