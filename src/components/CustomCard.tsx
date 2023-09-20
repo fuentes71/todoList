@@ -48,7 +48,7 @@ export default function CustomCard({
   };
 
   const onSubmit = (data: TTask) => {
-    console.log("ewrfoinweoin");
+    console.log(errors);
 
     dispatch(
       updateTaskAsyncThunk({
