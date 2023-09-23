@@ -7,30 +7,20 @@ import {
 } from "../../store/modules/tasksSlice";
 import "../../styles/animation/animationTask.css";
 import "../../styles/animation/filterTasks.css";
-import { TTask, TUser } from "../../types/Types";
+import {
+  MapTasksProps,
+  customCardValuesMapProps,
+} from "../../types/Interfaces";
+import { TTask } from "../../types/Types";
 import CustomCard from "../CustomCard";
 import BtnDelete from "./BtnDelete";
 import BtnEdit from "./BtnEdit";
 import CheckBoxDone from "./CheckBoxDone";
 import FileTask from "./FileTask";
 
-interface MapTasksProps {
-  tasks: TTask[];
-  user: TUser;
-}
-
-interface customCardValuesProps {
-  idTask?: string;
-  title: string;
-  message: string;
-  type: "EDIT" | "ALERT";
-  typeFunction: "LOGOUT" | "DELET" | "EDIT" | null;
-  open: boolean;
-}
-
 export default function MapTasks({ tasks, user }: MapTasksProps) {
   const [CustomCardValues, setCustomCardValues] =
-    useState<customCardValuesProps>({
+    useState<customCardValuesMapProps>({
       idTask: "",
       title: "",
       message: "",
@@ -39,7 +29,6 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
       open: false,
     });
   const dispatch = useAppDispatch();
-
   const [filters, setFilters] = useState({
     title: { active: false, value: "" },
     completed: { active: false },
@@ -60,7 +49,7 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
     //se algum filtro estiver ativo, faça o filtro na linha seguinte
     return tasks.filter((task) => {
       const titleFilter =
-        !filters.title.active || task.title.includes(filters.title.value);
+        !filters.title.active || task.message.includes(filters.title.value);
       const completedFilter = !filters.completed.active || task.done === "DONE";
       const archivedFilter = !filters.archived.active || task.file === "FILED";
 
@@ -107,7 +96,7 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
         <CustomCard
           idTask={CustomCardValues.idTask!}
           idUser={user.id}
-          type={CustomCardValues.type}
+          _type={CustomCardValues.type}
           title={CustomCardValues.title}
           message={CustomCardValues.message}
           param={CustomCardValues.typeFunction}
@@ -195,8 +184,8 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
               return (
                 <div key={task.id}>
                   <div className="div-task relative w-full ">
-                    <div className="flex justify-center relative items-center  bg-gray-100 border-2   rounded-xl">
-                      <div className="pl-1   ">
+                    <div className="flex  relative items-center  bg-gray-100 border-2   rounded-xl">
+                      <div className="pl-1">
                         <CheckBoxDone
                           checked={task.done === "DONE" ? true : false}
                           idTask={task.id}
@@ -205,14 +194,19 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
                           }}
                         />
                       </div>
-                      <div className="  pl-4 p-10 flex justify-center items-start rounded-xl flex-col w-full font-bold  h-24">
-                        <h2
+                      <div className="  pl-5 p-5  w-full font-bold relative h-auto">
+                        <p
                           className={task.done === "DONE" ? "line-through" : ""}
                         >
                           {task.title}
-                        </h2>
+                        </p>
                         <p
-                          className={task.done === "DONE" ? "line-through" : ""}
+                          style={{ animationDelay: "100ms" }}
+                          className={
+                            task.done === "DONE"
+                              ? "line-through break-words"
+                              : "break-words"
+                          }
                         >
                           {task.message}
                         </p>
@@ -246,7 +240,7 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
                               setCustomCardValues({
                                 ...CustomCardValues,
                                 idTask: task.id,
-                                message: `Deseja deletar o recado: ${task.title}?`,
+                                message: `Deseja deletar o recado: ${task.message}?`,
                                 open: true,
                                 type: "ALERT",
                                 title: "Deletar Tarefa.",

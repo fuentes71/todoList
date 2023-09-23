@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import LoadingAnimation from "../components/animation/LoadingAnimation";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { closeAlert } from "../store/modules/alertSlice";
 import { loginAsyncThunk } from "../store/modules/userSlice";
@@ -41,7 +40,6 @@ export default function Login() {
 
   return (
     <>
-      {user.loading ? <LoadingAnimation /> : ""}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">

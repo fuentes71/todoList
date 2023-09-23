@@ -1,7 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { closeAlert, setAlert } from "../store/modules/alertSlice";
 import {
   deleteTaskAsyncThunk,
   updateTaskAsyncThunk,
@@ -9,12 +9,13 @@ import {
 import { logout } from "../store/modules/userSlice";
 import "../styles/animation/customCard.css";
 import { CustomCardProps } from "../types/Interfaces";
-import { TTask, schemaTask } from "../types/ZTypes";
+import { TCreateTask } from "../types/Types";
+import { TTask } from "../types/ZTypes";
 
 export default function CustomCard({
   title,
   message,
-  type,
+  _type,
   param,
   handleClose,
   idTask,
@@ -23,14 +24,59 @@ export default function CustomCard({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<TTask>({
-    resolver: zodResolver(schemaTask),
+  const { msg, type } = useAppSelector((state) => state.alert);
+
+  const [newTask, setNewTask] = useState<TCreateTask>({
+    title: "",
+    message: "",
   });
+  const [error, setError] = useState<boolean>(false);
+
+  const onSubmit = (data: TTask) => {
+    if (!newTask.message.length || !newTask.title.length) {
+      setError(!error);
+      return dispatch(
+        setAlert({
+          msg: "Preencha todos os campos.",
+          type: "error",
+        })
+      );
+    }
+    if (newTask.title.length <= 5) {
+      setError(!error);
+      return dispatch(
+        setAlert({
+          msg: "Titulo precisa ser maior ou igual a 6 caracteres.",
+          type: "info",
+        })
+      );
+    }
+    if (newTask.message.length <= 5) {
+      setError(!error);
+      return dispatch(
+        setAlert({
+          msg: "Descriçao precisa ser maior ou igual a 6 caracteres.",
+          type: "info",
+        })
+      );
+    }
+    setError(!error);
+
+    dispatch(closeAlert());
+
+    dispatch(
+      updateTaskAsyncThunk({
+        idTask: idTask,
+        idUser: idUser,
+        task: data,
+        title: data.title,
+        message: data.message,
+      })
+    );
+
+    setNewTask({ title: "", message: "" });
+    handleClose();
+  };
 
   const handleFunction = (value: boolean, typeFunction: string) => {
     if (typeFunction === "DELET" && value) {
@@ -47,23 +93,9 @@ export default function CustomCard({
     }
   };
 
-  const onSubmit = (data: TTask) => {
-    console.log(errors);
-
-    dispatch(
-      updateTaskAsyncThunk({
-        idTask: idTask,
-        idUser: idUser,
-        task: data,
-        message: data.message,
-        title: data.title,
-      })
-    );
-  };
-
   return (
     <>
-      {type == "ALERT" && (
+      {_type == "ALERT" && (
         <div className=" containerCard">
           <div className="card">
             <div className="card-content">
@@ -86,41 +118,69 @@ export default function CustomCard({
           </div>
         </div>
       )}
-      {type == "EDIT" && (
+      {_type == "EDIT" && (
         <div className="containerCard">
           <div className="form-container">
-            <form
-              className="form"
-              onSubmit={(e) => {
-                e.preventDefault(), handleSubmit(onSubmit);
-              }}
-            >
+            {type === "error" && error ? (
+              <span className=" text-red-500 font-bold">{msg}</span>
+            ) : (
+              ""
+            )}
+            {type === "info" && error ? (
+              <span className=" text-yellow-500 font-bold">{msg}</span>
+            ) : (
+              ""
+            )}
+            <form className="form">
               <div className="form-group">
                 <label htmlFor="email">Title:</label>
-                <input type="text" placeholder={title} {...register("title")} />
+                <input
+                  maxLength={20}
+                  id="title"
+                  type="text"
+                  required
+                  value={newTask.title}
+                  placeholder={title}
+                  onChange={(e) => {
+                    setNewTask((state) => ({
+                      ...state,
+                      title: e.target.value,
+                    }));
+                  }}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="textarea">Descriçao:</label>
                 <textarea
+                  id="message"
+                  name="message"
+                  maxLength={50}
                   rows={10}
                   cols={20}
+                  value={newTask.message}
                   placeholder={message}
-                  {...register("message")}
+                  onChange={(e) => {
+                    setNewTask((state) => ({
+                      ...state,
+                      message: e.target.value,
+                    }));
+                  }}
                 ></textarea>
               </div>
               <div className="buttonContainer">
                 <button
+                  type="button"
                   className="acceptButton edit"
                   onClick={() => {
-                    handleClose();
+                    onSubmit(newTask);
                   }}
                 >
                   Aceitar
                 </button>
                 <button
+                  type="button"
                   className="declineButton"
                   onClick={() => {
-                    reset();
                     handleClose();
                   }}
                 >

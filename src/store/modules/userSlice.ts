@@ -2,11 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axios } from "../../service/api";
 import { TCreate, TLogin, TUser } from "../../types/Types";
 import { setAlert } from "./alertSlice";
+import { closeLoading, setLoading } from "./loadingSlice";
 
 export const singUpAsyncThunk = createAsyncThunk(
   "userLogged/createUser",
   async (data: TCreate, { dispatch }) => {
     try {
+      dispatch(setLoading());
       const response = await axios.post("/accounts/singup", data);
       dispatch(
         setAlert({
@@ -16,12 +18,15 @@ export const singUpAsyncThunk = createAsyncThunk(
       );
       return response;
     } catch (error) {
+      dispatch(closeLoading());
       return dispatch(
         setAlert({
           msg: "Esta conta já existe.",
           type: "error",
         })
       );
+    } finally {
+      dispatch(closeLoading());
     }
   }
 );
@@ -30,9 +35,11 @@ export const loginAsyncThunk = createAsyncThunk(
   "userLogged/login",
   async (data: TLogin, { dispatch }) => {
     try {
+      dispatch(setLoading());
       const response = await axios.post("/accounts/login", data);
       return response;
     } catch (error) {
+      dispatch(closeLoading());
       dispatch(
         setAlert({
           msg: "Esta conta não existe.",
@@ -40,6 +47,8 @@ export const loginAsyncThunk = createAsyncThunk(
         })
       );
       throw error;
+    } finally {
+      dispatch(closeLoading());
     }
   }
 );

@@ -5,6 +5,11 @@ type TFeedback = {
   show: boolean;
 };
 
+//loadingSlice
+type TLoading = {
+  loading: boolean;
+};
+
 //tasksSlice
 type TTask = {
   id: string;
@@ -52,6 +57,7 @@ export type {
   TCreateTask,
   TFeedback,
   TGetTask,
+  TLoading,
   TLogin,
   TRequestTask,
   TTask,

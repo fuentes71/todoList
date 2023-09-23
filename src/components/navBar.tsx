@@ -21,7 +21,7 @@ export default function NavBar({ user }: any) {
           title="Desconectar."
           message={`${user.name}, Deseja mesmo desconectar do Site?`}
           handleClose={() => setOpenCard(false)}
-          type={"ALERT"}
+          _type={"ALERT"}
           idTask={""}
           idUser={""}
           param={"LOGOUT"}
