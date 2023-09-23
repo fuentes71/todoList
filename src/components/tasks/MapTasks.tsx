@@ -49,7 +49,7 @@ export default function MapTasks({ tasks, user }: MapTasksProps) {
     //se algum filtro estiver ativo, faça o filtro na linha seguinte
     return tasks.filter((task) => {
       const titleFilter =
-        !filters.title.active || task.message.includes(filters.title.value);
+        !filters.title.active || task.title.includes(filters.title.value);
       const completedFilter = !filters.completed.active || task.done === "DONE";
       const archivedFilter = !filters.archived.active || task.file === "FILED";
 
